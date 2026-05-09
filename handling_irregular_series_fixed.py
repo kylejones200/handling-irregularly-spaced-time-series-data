@@ -4,7 +4,28 @@ import matplotlib.pyplot as plt
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
 
-np.random.seed(42)
+import logging
+import yaml
+
+from pathlib import Path
+
+
+def load_config(config_path=None):
+    """Load configuration from YAML file."""
+    if config_path is None:
+        config_path = Path(__file__).parent / 'config.yaml'
+    if not config_path.exists():
+        return {}
+    with open(config_path) as _f:
+        import yaml as _yaml
+        return _yaml.safe_load(_f) or {}
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+np.random.seed(config.get('data', {}).get('seed', 42))
 
 plt.rcParams.update({
     'font.family': 'serif',
@@ -34,7 +55,7 @@ def build_irregular_df():
 
 def plot_irregular_and_resampled(df: pd.DataFrame, freq: str = '10min'):
     regular_df = df.resample(freq).ffill()
-    plt.figure(figsize=(8, 4))
+    plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
     plt.scatter(df.index, df['value'], label='Irregular')
     plt.plot(regular_df.index, regular_df['value'], label='Resampled ffill')
     plt.title('Irregular vs Resampled (ffill)')
@@ -56,7 +77,7 @@ def plot_causal_resample_split(df: pd.DataFrame, freq: str = '10min'):
 
     regular_df = pd.concat([train_reg, test_reg])
 
-    plt.figure(figsize=(8, 4))
+    plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
     plt.scatter(df.index, df['value'], label='Irregular')
     plt.plot(regular_df.index, regular_df['value'], label='Causal ffill across split')
     plt.title('Causal Resampling Across Chrono Split')
@@ -77,7 +98,7 @@ def plot_causal_interpolation_split(df: pd.DataFrame, freq: str = '10min'):
 
     df_model = pd.concat([train_interp, test_interp])
 
-    plt.figure(figsize=(8, 4))
+    plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
     plt.scatter(df.index, df['value'], label='Irregular')
     plt.plot(df_model.index, df_model['value'], label='Causal interpolation (train), ffill (test)')
     plt.title('Causal Interpolation Across Chrono Split')
@@ -99,7 +120,7 @@ def plot_gp_predictions(df: pd.DataFrame):
     gp.fit(X_train, y_train)
     y_pred, y_std = gp.predict(X_test, return_std=True)
 
-    plt.figure(figsize=(8, 4))
+    plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
     plt.scatter(df_gp['t'], df_gp['y'], label='Observations')
     plt.plot(X_test.ravel(), y_pred, label='GP mean (test)')
     plt.fill_between(X_test.ravel(), y_pred - 2*y_std, y_pred + 2*y_std, alpha=0.2, label='95% CI')
@@ -113,4 +134,4 @@ if __name__ == '__main__':
     plot_causal_resample_split(df)
     plot_causal_interpolation_split(df)
     plot_gp_predictions(df)
-    print('Images written: irregular_vs_resampled.png, causal_resample_split.png, causal_interpolation_split.png, gp_predictions.png')
+    logger.info('Images written: irregular_vs_resampled.png, causal_resample_split.png, causal_interpolation_split.png, gp_predictions.png')

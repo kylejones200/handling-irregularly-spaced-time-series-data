@@ -1,0 +1,13 @@
+data:
+  seed: 42
+  test_size: 0.33
+model:
+  alpha: 0.01
+output:
+  figures_dir: images
+  figure_format: png
+  figure_dpi: 100
+  font_family: serif
+  figsize:
+  - 8
+  - 4
