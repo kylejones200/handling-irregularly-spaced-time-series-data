@@ -53,16 +53,17 @@ def build_irregular_df():
     df['timestamp'] = pd.to_datetime(df['timestamp'])
     return df.set_index('timestamp').sort_index()
 
-def plot_irregular_and_resampled(df: pd.DataFrame, freq: str = '10min'):
+def plot_irregular_and_resampled(df: pd.DataFrame, freq: str = '10min', plot: bool = False):
     regular_df = df.resample(freq).ffill()
-    plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
-    plt.scatter(df.index, df['value'], label='Irregular')
-    plt.plot(regular_df.index, regular_df['value'], label='Resampled ffill')
-    plt.title('Irregular vs Resampled (ffill)')
-    plt.xlabel('Time'); plt.ylabel('Value'); plt.legend()
-    save_fig('irregular_vs_resampled.png')
+    if plot:
+        plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
+        plt.scatter(df.index, df['value'], label='Irregular')
+        plt.plot(regular_df.index, regular_df['value'], label='Resampled ffill')
+        plt.title('Irregular vs Resampled (ffill)')
+        plt.xlabel('Time'); plt.ylabel('Value'); plt.legend()
+        save_fig('irregular_vs_resampled.png')
 
-def plot_causal_resample_split(df: pd.DataFrame, freq: str = '10min'):
+def plot_causal_resample_split(df: pd.DataFrame, freq: str = '10min', plot: bool = False):
     df_train, df_test = chrono_split(df.reset_index(), 'timestamp', test_size=0.33)
     df_train = df_train.set_index('timestamp').sort_index()
     df_test = df_test.set_index('timestamp').sort_index()
@@ -77,14 +78,15 @@ def plot_causal_resample_split(df: pd.DataFrame, freq: str = '10min'):
 
     regular_df = pd.concat([train_reg, test_reg])
 
-    plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
-    plt.scatter(df.index, df['value'], label='Irregular')
-    plt.plot(regular_df.index, regular_df['value'], label='Causal ffill across split')
-    plt.title('Causal Resampling Across Chrono Split')
-    plt.xlabel('Time'); plt.ylabel('Value'); plt.legend()
-    save_fig('causal_resample_split.png')
+    if plot:
+        plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
+        plt.scatter(df.index, df['value'], label='Irregular')
+        plt.plot(regular_df.index, regular_df['value'], label='Causal ffill across split')
+        plt.title('Causal Resampling Across Chrono Split')
+        plt.xlabel('Time'); plt.ylabel('Value'); plt.legend()
+        save_fig('causal_resample_split.png')
 
-def plot_causal_interpolation_split(df: pd.DataFrame, freq: str = '10min'):
+def plot_causal_interpolation_split(df: pd.DataFrame, freq: str = '10min', plot: bool = False):
     df_train, df_test = chrono_split(df.reset_index(), 'timestamp', test_size=0.33)
     df_train = df_train.set_index('timestamp').sort_index()
     df_test = df_test.set_index('timestamp').sort_index()
@@ -98,14 +100,15 @@ def plot_causal_interpolation_split(df: pd.DataFrame, freq: str = '10min'):
 
     df_model = pd.concat([train_interp, test_interp])
 
-    plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
-    plt.scatter(df.index, df['value'], label='Irregular')
-    plt.plot(df_model.index, df_model['value'], label='Causal interpolation (train), ffill (test)')
-    plt.title('Causal Interpolation Across Chrono Split')
-    plt.xlabel('Time'); plt.ylabel('Value'); plt.legend()
-    save_fig('causal_interpolation_split.png')
+    if plot:
+        plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
+        plt.scatter(df.index, df['value'], label='Irregular')
+        plt.plot(df_model.index, df_model['value'], label='Causal interpolation (train), ffill (test)')
+        plt.title('Causal Interpolation Across Chrono Split')
+        plt.xlabel('Time'); plt.ylabel('Value'); plt.legend()
+        save_fig('causal_interpolation_split.png')
 
-def plot_gp_predictions(df: pd.DataFrame):
+def plot_gp_predictions(df: pd.DataFrame, plot: bool = False):
     t_ns = df.index.asi8
     t = (t_ns - t_ns.min()) / 6e10
     vals = df['value'].values
@@ -120,13 +123,14 @@ def plot_gp_predictions(df: pd.DataFrame):
     gp.fit(X_train, y_train)
     y_pred, y_std = gp.predict(X_test, return_std=True)
 
-    plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
-    plt.scatter(df_gp['t'], df_gp['y'], label='Observations')
-    plt.plot(X_test.ravel(), y_pred, label='GP mean (test)')
-    plt.fill_between(X_test.ravel(), y_pred - 2*y_std, y_pred + 2*y_std, alpha=0.2, label='95% CI')
-    plt.title('Gaussian Process on Irregular Times (Train-only fit)')
-    plt.xlabel('Minutes'); plt.ylabel('Value'); plt.legend()
-    save_fig('gp_predictions.png')
+    if plot:
+        plt.figure(figsize=tuple(config.get('output', {}).get('figsize', [8, 4])))
+        plt.scatter(df_gp['t'], df_gp['y'], label='Observations')
+        plt.plot(X_test.ravel(), y_pred, label='GP mean (test)')
+        plt.fill_between(X_test.ravel(), y_pred - 2*y_std, y_pred + 2*y_std, alpha=0.2, label='95% CI')
+        plt.title('Gaussian Process on Irregular Times (Train-only fit)')
+        plt.xlabel('Minutes'); plt.ylabel('Value'); plt.legend()
+        save_fig('gp_predictions.png')
 
 if __name__ == '__main__':
     df = build_irregular_df()
