@@ -4,6 +4,7 @@
 
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
+import signalplot
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
@@ -95,10 +96,6 @@ def make_windows(df, time_col, value_col, window=30):
 # X_train = scaler.transform(...), X_test = scaler.transform(...)
 
 
-def save_fig(path):
-    plt.tight_layout()
-    plt.savefig(path, bbox_inches='tight')
-    plt.close()
 
 # Example usage
 plt.scatter(df.index, df['value'], label='Irregular Data')
@@ -106,4 +103,4 @@ plt.plot(regular_df.index, regular_df['value'], label='Resampled Data')
 plt.legend()
 plt.title('Visualization of Irregular Time Series')
 plt.xlabel('Time'); plt.ylabel('Value')
-save_fig('irregular_time_series_plot.png')
+signalplot.save('irregular_time_series_plot.png')
