@@ -26,12 +26,12 @@ Resampling: Resampling converts irregular data to a regular interval. You choose
 
 You lose temporal precision but gain modeling compatibility.
 
-**Interpolation:** Interpolation estimates missing values using known data. It fills gaps while preserving continuity.
+Interpolation: Interpolation estimates missing values using known data. It fills gaps while preserving continuity.
 
 
 Linear and spline methods work well for smooth signals. Avoid this if events are discrete or sparse.
 
-**Models Built for Irregular Time:** Some models support irregular inputs natively.
+Models Built for Irregular Time: Some models support irregular inputs natively.
 
 Gaussian Processes work well with any set of time points. They handle uncertainty and interpolation together.
 
@@ -39,11 +39,11 @@ Gaussian Processes work well with any set of time points. They handle uncertaint
 
 Time-Aware RNNs add time gaps as inputs. This allows sequence models to account for delay and drift.
 
-**Event-Based Analysis:** When time gaps carry meaning, you can model the events themselves. Survival analysis, hazard functions, and point process models treat each timestamp as informative.
+Event-Based Analysis: When time gaps carry meaning, you can model the events themselves. Survival analysis, hazard functions, and point process models treat each timestamp as informative.
 
 Use this when the goal is to predict *when* the next event will happen, not just the value of the next observation.
 
-**Dynamic Time Warping (**DTW): compares time series with different lengths or time alignments. DTW finds the best match between sequences regardless of spacing.
+Dynamic Time Warping (DTW): compares time series with different lengths or time alignments. DTW finds the best match between sequences regardless of spacing.
 
 It works well in classification and clustering of irregular sequences.
 

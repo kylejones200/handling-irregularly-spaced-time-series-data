@@ -1,7 +1,7 @@
 # Handling Irregularly Spaced Time Series Data
 
-**Published:** 2025-07-18
-**Medium:** [https://medium.com/@kyle-t-jones/handling-irregularly-spaced-time-series-data-2399c5411832](https://medium.com/@kyle-t-jones/handling-irregularly-spaced-time-series-data-2399c5411832)
+Published: 2025-07-18
+Medium: [https://medium.com/@kyle-t-jones/handling-irregularly-spaced-time-series-data-2399c5411832](https://medium.com/@kyle-t-jones/handling-irregularly-spaced-time-series-data-2399c5411832)
 
 ## About
 
