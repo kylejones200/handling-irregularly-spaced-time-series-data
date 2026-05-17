@@ -50,7 +50,7 @@ test_reg = df_test.resample("10min").asfreq()
 test_reg.loc[test_reg.index[0], "value"] = init["value"].iloc[0]
 test_reg = test_reg.ffill()
 
-regular_df = pd.concat([train_reg, test_reg])
+regular_df = train_reg.append(test_reg)
 logger.info(regular_df.head(10))
 
 # Interpolate only inside TRAIN
@@ -61,7 +61,7 @@ test_interp = df_test.resample("10min").asfreq()
 test_interp.loc[test_interp.index[0], "value"] = train_interp.iloc[-1]["value"]
 test_interp = test_interp.ffill()
 
-df_model = pd.concat([train_interp, test_interp])
+df_model = train_interp.append(test_interp)
 
 
 # Irregular times (in minutes)
