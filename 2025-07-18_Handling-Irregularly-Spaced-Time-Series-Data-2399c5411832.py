@@ -1,6 +1,5 @@
 # Description: Short example for Handling Irregularly Spaced Time Series Data.
 
-
 import logging
 
 import matplotlib.pyplot as plt
@@ -63,7 +62,6 @@ test_interp = test_interp.ffill()
 
 df_model = train_interp.append(test_interp)
 
-
 # Irregular times (in minutes)
 ts = np.array([0, 5, 15, 60, 75, 120], dtype=float)
 vals = np.array([10, 15, 20, 18, 22, 19], dtype=float)
@@ -103,7 +101,6 @@ def make_windows(df, time_col, value_col, window=30):
 # from sklearn.preprocessing import StandardScaler
 # scaler.fit(X_train.reshape(-1, X_train.shape[-1]))
 # X_train = scaler.transform(...), X_test = scaler.transform(...)
-
 
 # Example usage
 plt.scatter(df.index, df["value"], label="Irregular Data")
